@@ -5,31 +5,31 @@
 
 import pandas as pd
 import numpy as np
-import scipy.io as sp
 import csv
 import os
 import argparse
 
 
-#python3 vdj_filter_cellRanger.py -i test_CellRangerVDJ.csv -o TEST_OUT.csv
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--inputfile',required=True,type=str)
 parser.add_argument('-o', '--outputfile',required=True,type=str)
 args = parser.parse_args()
 
-#'''reads in cellranger output into pandas dataframe'''
+"""
+reads in cellranger output into pandas dataframe
+"""
 cellranger_out = pd.read_csv(args.inputfile)
 
-#print(cellranger_out.loc[:, ['barcode', 'contig_id','chain','v_gene','d_gene','j_gene','c_gene','productive']])
-
-#'''creates a boolean array that is then used to filter out the nonproductive genes'''
+"""
+creates a boolean array that is then used to filter out the nonproductive genes
+"""
 is_productive = cellranger_out['productive']==("True" or "TRUE")
 #print(cellranger_out['productive'])
 df_productive = cellranger_out[is_productive]
 
-#'''prints a truncated matrix with the relevant information'''
-#print(df_productive.loc[:, ['barcode', 'contig_id','chain','v_gene','d_gene','j_gene','c_gene','productive']])
-
+"""
+prints a truncated matrix with the relevant information
+"""
 
 inserted_barcodes_IGH = set()
 inserted_barcodes_IGL = set()
@@ -141,42 +141,6 @@ cellrange_reformated = cellrange.groupby('barcode').agg(lambda x: ' '.join(x.uni
 print(cellrange_reformated)
 cellrange_reformated.to_csv('cellranger_reformated.csv')
 
-
-#----------------------------
-''' CITE-SEQ COUNT
-with open('features.tsv', 'r') as f:
-    reader = csv.reader(f)
-    ugh = list(reader)
-
-features = [item for sublist in ugh for item in sublist]
-
-#print(features)
-
-with open('barcodes.tsv', 'r') as b:
-    read = csv.reader(b)
-    ugh1 = list(read)
-
-barcodes = [item for sublist in ugh1 for item in sublist]
-#print(barcodes)
-
-
-
-matrix = sp.mmread('matrix.mtx')
-B = matrix.todense()
-count_out = pd.DataFrame(B)
-count_out.columns = barcodes
-count_out.index = features
-count_out_transposed = count_out.T
-count_out_transposed = count_out_transposed.rename_axis('barcode').reset_index()
-
-
-result = pd.merge(count_out_transposed, cellrange_reformated, on='barcode')
-print(result)
-
-result.to_csv('CiteSeqCountTestResult.csv')
-'''
-#----------------------------
-
 with open('features.tsv', 'r') as f:
     reader = csv.reader(f)
     ugh = list(reader)
@@ -209,4 +173,4 @@ print(result)
 #result.to_csv('count_CELLRANGER_Result_CDR3_CONTIG_ID_v2.csv')
 #result.to_csv('TEST_OUT.csv')
 
-#result.to_csv(args.outputfile)
+result.to_csv(args.outputfile)
