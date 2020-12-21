@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Kai Fung (kaitious.fung@gmail.com)
+"""
+
 import pandas as pd
 import numpy as np
 import scipy.io as sp
